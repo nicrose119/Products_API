@@ -10,9 +10,18 @@ def products_list(request):
     if request.method == 'Get':
         products = Products.objects.all()
         serializer = ProductSerializer(products, many=True)
-        return Response (serializer.data, status = status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
     elif request.method == 'POST':
         serializer = ProductSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        serializer.is_valid() == True
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+def product_details(request, pk):
+    try:
+        products = Products.objects.get(pk=pk)
+        serializer = ProductSerializer(products)
+        return Response(serializer.data)
+    except Products.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
